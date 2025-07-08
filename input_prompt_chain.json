@@ -1,0 +1,83 @@
+{
+  "chain_name": "10-Step Content Development Chain",
+  "description": "A comprehensive 10-step chain that develops content through multiple refinement stages",
+  "steps": [
+    {
+      "step_id": 1,
+      "name": "Topic Research",
+      "prompt": "Research and provide 5 key facts about artificial intelligence in healthcare. Include recent developments and statistics.",
+      "use_previous_output": false,
+      "output_variable": "research_facts"
+    },
+    {
+      "step_id": 2,
+      "name": "Problem Identification",
+      "prompt": "Based on this research, identify the top 3 challenges that AI in healthcare currently faces:\n\n{previous_output}",
+      "use_previous_output": true,
+      "output_variable": "challenges"
+    },
+    {
+      "step_id": 3,
+      "name": "Solution Brainstorming",
+      "prompt": "For each of these challenges, propose 2 potential solutions or approaches:\n\n{previous_output}",
+      "use_previous_output": true,
+      "output_variable": "solutions"
+    },
+    {
+      "step_id": 4,
+      "name": "Impact Analysis",
+      "prompt": "Analyze the potential impact of these solutions on patients, healthcare providers, and the healthcare system:\n\n{previous_output}",
+      "use_previous_output": true,
+      "output_variable": "impact_analysis"
+    },
+    {
+      "step_id": 5,
+      "name": "Implementation Timeline",
+      "prompt": "Create a realistic timeline for implementing these solutions, considering regulatory, technical, and adoption challenges:\n\n{previous_output}",
+      "use_previous_output": true,
+      "output_variable": "timeline"
+    },
+    {
+      "step_id": 6,
+      "name": "Stakeholder Mapping",
+      "prompt": "Identify key stakeholders who would be involved in implementing these AI healthcare solutions and their roles:\n\n{previous_output}",
+      "use_previous_output": true,
+      "output_variable": "stakeholders"
+    },
+    {
+      "step_id": 7,
+      "name": "Risk Assessment",
+      "prompt": "Assess potential risks and mitigation strategies for the implementation plan:\n\n{previous_output}",
+      "use_previous_output": true,
+      "output_variable": "risk_assessment"
+    },
+    {
+      "step_id": 8,
+      "name": "Success Metrics",
+      "prompt": "Define measurable success metrics and KPIs for evaluating the effectiveness of these AI healthcare implementations:\n\n{previous_output}",
+      "use_previous_output": true,
+      "output_variable": "success_metrics"
+    },
+    {
+      "step_id": 9,
+      "name": "Executive Summary",
+      "prompt": "Create a comprehensive executive summary (300-400 words) that synthesizes all the analysis above into a clear business case:\n\n{previous_output}",
+      "use_previous_output": true,
+      "output_variable": "executive_summary"
+    },
+    {
+      "step_id": 10,
+      "name": "Action Plan",
+      "prompt": "Based on the executive summary, create a prioritized action plan with 10 specific, actionable steps for the next 6 months:\n\n{previous_output}",
+      "use_previous_output": true,
+      "output_variable": "action_plan"
+    }
+  ],
+  "chain_parameters": {
+    "max_tokens_per_step": 800,
+    "temperature": 0.7,
+    "timeout_seconds": 60,
+    "continue_on_error": false,
+    "save_intermediate_results": true
+  }
+}

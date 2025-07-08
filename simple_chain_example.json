@@ -1,0 +1,27 @@
+{
+  "chain_name": "Simple Writing Chain",
+  "description": "A simple 2-step chain that creates content and then improves it",
+  "steps": [
+    {
+      "step_id": 1,
+      "name": "Initial Draft",
+      "prompt": "Write a short paragraph (3-4 sentences) about the benefits of exercise.",
+      "use_previous_output": false,
+      "output_variable": "draft"
+    },
+    {
+      "step_id": 2,
+      "name": "Improve and Expand",
+      "prompt": "Take the following paragraph and improve it by making it more engaging and adding one specific example:\n\n{previous_output}",
+      "use_previous_output": true,
+      "output_variable": "improved_version"
+    }
+  ],
+  "chain_parameters": {
+    "max_tokens_per_step": 500,
+    "temperature": 0.7,
+    "timeout_seconds": 60,
+    "continue_on_error": false,
+    "save_intermediate_results": true
+  }
+}

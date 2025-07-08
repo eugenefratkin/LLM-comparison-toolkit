@@ -8,10 +8,13 @@ A Python tool for comparing responses from multiple Large Language Model APIs si
   - Inception Labs API (mercury, gpt-3.5-turbo, gpt-4, etc.)
   - OpenAI API (gpt-3.5-turbo, gpt-4, gpt-4o, etc.)
   - Google Gemini AI (gemini-pro, gemini-1.5-pro, etc.)
+- **Two comparison modes:**
+  - **Single Prompt**: Compare responses to one prompt across all APIs
+  - **Prompt Chains**: Execute multi-step chains where output feeds into next step
 - **Configurable model selection** - Choose specific models for each provider
-- Measures and records response times for each API
+- Measures and records response times for each API and chain step
 - Saves results in CSV format for easy analysis
-- Reads prompts from external text files
+- Reads prompts from external text files or JSON chain definitions
 - Handles API errors gracefully
 - Command-line options to list available models
 
@@ -74,29 +77,50 @@ A Python tool for comparing responses from multiple Large Language Model APIs si
 
 ### Basic Usage
 
+#### Single Prompt Comparison
+
 1. **Prepare your prompt:**
    ```bash
    # Edit the prompt file with your question
    echo "What are the benefits of renewable energy?" > prompt.txt
    ```
 
-2. **Configure models (optional):**
-   ```bash
-   # View available models
-   python llm_comparison.py --models
-
-   # Edit models_config.json to select different models
-   nano models_config.json
-   ```
-
-3. **Run the comparison:**
+2. **Run the comparison:**
    ```bash
    python llm_comparison.py
    ```
 
-4. **Check the results:**
-   - Console output shows a summary
-   - Detailed results saved to `llm_comparison_results.csv`
+#### Prompt Chain Comparison
+
+1. **Prepare your chain:**
+   ```bash
+   # Use the provided example or create your own
+   cp simple_chain_example.json input_prompt_chain.json
+
+   # Or edit the chain file
+   nano input_prompt_chain.json
+   ```
+
+2. **Run the chain comparison:**
+   ```bash
+   python llm_comparison.py --chain
+   ```
+
+#### Configuration (Optional)
+
+```bash
+# View available models
+python llm_comparison.py --models
+
+# Edit models_config.json to select different models
+nano models_config.json
+```
+
+#### Results
+
+- Console output shows a summary
+- **Single prompt**: Results saved to `llm_comparison_results.csv`
+- **Chain**: Results saved to `llm_chain_results.csv`
 
 ### Example Run
 
@@ -143,8 +167,11 @@ Gemini AI - gemini-pro (1.456s):
 ### Command Line Options
 
 ```bash
-# Run comparison with current configuration
+# Run single prompt comparison
 python llm_comparison.py
+
+# Run prompt chain comparison
+python llm_comparison.py --chain
 
 # List all available models
 python llm_comparison.py --models
@@ -212,6 +239,72 @@ The `models_config.json` file controls which models are used for comparison:
 - **For speed**: Use `gpt-3.5-turbo`, `gemini-1.5-flash`, `mercury`
 - **For quality**: Use `gpt-4o`, `gemini-1.5-pro`, `gpt-4`
 - **For cost-effectiveness**: Use `gpt-3.5-turbo`, `gemini-pro`, `mercury`
+
+## Prompt Chains
+
+### What are Prompt Chains?
+
+Prompt chains allow you to execute a sequence of LLM calls where the output of one step becomes the input for the next step. This enables complex workflows like:
+
+- **Research → Analysis → Summary → Action Items**
+- **Draft → Review → Improve → Finalize**
+- **Question → Research → Synthesize → Recommend**
+
+### Chain File Structure
+
+Create a JSON file with the following structure:
+
+```json
+{
+  "chain_name": "Your Chain Name",
+  "description": "Description of what this chain does",
+  "steps": [
+    {
+      "step_id": 1,
+      "name": "Step Name",
+      "prompt": "Your prompt here",
+      "use_previous_output": false,
+      "output_variable": "variable_name"
+    },
+    {
+      "step_id": 2,
+      "name": "Next Step",
+      "prompt": "Process this data: {previous_output}",
+      "use_previous_output": true,
+      "output_variable": "next_variable"
+    }
+  ],
+  "chain_parameters": {
+    "max_tokens_per_step": 1500,
+    "temperature": 0.7,
+    "timeout_seconds": 60,
+    "continue_on_error": false,
+    "save_intermediate_results": true
+  }
+}
+```
+
+### Chain Parameters
+
+- **`use_previous_output`**: If `true`, replaces `{previous_output}` in the prompt with the previous step's response
+- **`continue_on_error`**: If `true`, continues executing remaining steps even if one fails
+- **`max_tokens_per_step`**: Token limit for each step (can override global setting)
+- **`save_intermediate_results`**: Whether to save each step's output
+
+### Example Chains
+
+The toolkit includes example chains:
+- **`simple_chain_example.json`**: Basic 2-step writing improvement chain
+- **`input_prompt_chain.json`**: Complex 4-step research and analysis chain
+
+### Chain Output
+
+Chain results include:
+- **Step-by-step execution details**
+- **Timing for each step and total time**
+- **Success/failure status for each step**
+- **Final output from the last successful step**
+- **Detailed CSV with all intermediate results**
 
 ## Understanding the Results
 
