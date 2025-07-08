@@ -5,13 +5,15 @@ A Python tool for comparing responses from multiple Large Language Model APIs si
 ## Features
 
 - Compares responses from three AI APIs:
-  - Inception Labs API
-  - OpenAI API (GPT-3.5-turbo)
-  - Google Gemini AI
+  - Inception Labs API (mercury, gpt-3.5-turbo, gpt-4, etc.)
+  - OpenAI API (gpt-3.5-turbo, gpt-4, gpt-4o, etc.)
+  - Google Gemini AI (gemini-pro, gemini-1.5-pro, etc.)
+- **Configurable model selection** - Choose specific models for each provider
 - Measures and records response times for each API
 - Saves results in CSV format for easy analysis
 - Reads prompts from external text files
 - Handles API errors gracefully
+- Command-line options to list available models
 
 ## Installation
 
@@ -78,12 +80,21 @@ A Python tool for comparing responses from multiple Large Language Model APIs si
    echo "What are the benefits of renewable energy?" > prompt.txt
    ```
 
-2. **Run the comparison:**
+2. **Configure models (optional):**
+   ```bash
+   # View available models
+   python llm_comparison.py --models
+
+   # Edit models_config.json to select different models
+   nano models_config.json
+   ```
+
+3. **Run the comparison:**
    ```bash
    python llm_comparison.py
    ```
 
-3. **Check the results:**
+4. **Check the results:**
    - Console output shows a summary
    - Detailed results saved to `llm_comparison_results.csv`
 
@@ -92,12 +103,22 @@ A Python tool for comparing responses from multiple Large Language Model APIs si
 ```bash
 $ python llm_comparison.py
 Starting LLM Comparison...
+============================================================
+CURRENT MODEL CONFIGURATION
+============================================================
+Inception Labs: mercury
+OpenAI: gpt-3.5-turbo
+Gemini: gemini-pro
+Max Tokens: 1000
+Temperature: 0.7
+============================================================
+
 Prompt: What are the benefits of renewable energy?
 
 Calling APIs...
-- Calling Inception Labs API...
-- Calling OpenAI API...
-- Calling Gemini AI...
+- Calling Inception Labs API (mercury)...
+- Calling OpenAI API (gpt-3.5-turbo)...
+- Calling Gemini AI (gemini-pro)...
 
 Results saved to: llm_comparison_results.csv
 
@@ -106,18 +127,91 @@ COMPARISON SUMMARY
 ================================================================================
 Prompt: What are the benefits of renewable energy?
 
-Inception Labs (2.341s):
+Inception Labs - mercury (2.341s):
   Success: True
   Response: Renewable energy offers numerous benefits including reduced carbon emissions, energy independence, job creation...
 
-OpenAI (1.823s):
+OpenAI - gpt-3.5-turbo (1.823s):
   Success: True
   Response: Renewable energy sources like solar, wind, and hydroelectric power provide several key advantages...
 
-Gemini AI (1.456s):
+Gemini AI - gemini-pro (1.456s):
   Success: True
   Response: The transition to renewable energy brings multiple benefits for both the environment and economy...
 ```
+
+### Command Line Options
+
+```bash
+# Run comparison with current configuration
+python llm_comparison.py
+
+# List all available models
+python llm_comparison.py --models
+
+# Show help
+python llm_comparison.py --help
+```
+
+## Model Configuration
+
+### Configuration File Structure
+
+The `models_config.json` file controls which models are used for comparison:
+
+```json
+{
+  "inception_labs": {
+    "available_models": ["mercury", "gpt-3.5-turbo", "gpt-4", "gpt-4-turbo"],
+    "default_model": "mercury"
+  },
+  "openai": {
+    "available_models": ["gpt-3.5-turbo", "gpt-4", "gpt-4o", "gpt-4o-mini"],
+    "default_model": "gpt-3.5-turbo"
+  },
+  "gemini": {
+    "available_models": ["gemini-pro", "gemini-1.5-pro", "gemini-1.5-flash"],
+    "default_model": "gemini-pro"
+  },
+  "selected_models": {
+    "inception_labs": "mercury",
+    "openai": "gpt-3.5-turbo",
+    "gemini": "gemini-pro"
+  },
+  "api_parameters": {
+    "max_tokens": 1000,
+    "temperature": 0.7,
+    "timeout_seconds": 60
+  }
+}
+```
+
+### Changing Models
+
+1. **View available models:**
+   ```bash
+   python llm_comparison.py --models
+   ```
+
+2. **Edit configuration:**
+   ```bash
+   nano models_config.json
+   ```
+
+3. **Update the `selected_models` section:**
+   ```json
+   "selected_models": {
+     "inception_labs": "gpt-4",
+     "openai": "gpt-4o",
+     "gemini": "gemini-1.5-pro"
+   }
+   ```
+
+### Model Recommendations
+
+- **For speed**: Use `gpt-3.5-turbo`, `gemini-1.5-flash`, `mercury`
+- **For quality**: Use `gpt-4o`, `gemini-1.5-pro`, `gpt-4`
+- **For cost-effectiveness**: Use `gpt-3.5-turbo`, `gemini-pro`, `mercury`
 
 ## Understanding the Results
 
