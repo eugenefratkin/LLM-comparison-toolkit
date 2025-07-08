@@ -1,1 +1,31 @@
-What are the key differences between machine learning and artificial intelligence? Please provide a concise explanation with examples.
+### 10-STEP WORD-NUMBER CHALLENGE
+Your task is to return **one JSON object** that satisfies **all ten conditions below.**
+
+```jsonc
+{
+  "words":  [  /* exactly 7 items, all lowercase 5-letter English words */ ],
+  "numbers":[  /* exactly 7 positive integers                     */ ],
+  "proof":  "" /* short explanation of how each rule is met      */
+}
+```
+
+#### WORD RULES
+1. **Word Ladder** – Each consecutive word differs from the previous one by **exactly one letter** (classic word-ladder constraint).  
+2. **Alphabet End-caps** –  
+   - The **first** word’s letters must already be in alphabetical order (e.g., “abcry” is OK).  
+   - The **last** word’s letters must be in *reverse* alphabetical order.  
+3. **Anagram Anchor** – The **3rd** word must be a perfect anagram of **“alert”**.  
+4. **Vowel Test** – The **5th** word must contain **exactly two vowels** (a, e, i, o, u).  
+5. **Forbidden Letters** – **None** of the seven words may contain the letters **“s”** or **“z.”**
+
+#### NUMBER RULES
+6. Provide seven distinct positive integers, one paired with each word (same index).  
+7. **Digit Sum Prime** – For every number, the sum of its decimal digits must be a **prime** (2, 3, 5, 7, 11, 13, …).  
+8. **Reversible Multiple** – Writing each number backward (e.g., 123 → 321) must produce a value that is an integer **multiple of 9**.  
+9. **Ordered Pairs** – If you sort the words alphabetically and sort the numbers ascending, their original index pairing must *still* satisfy this rule:  
+   `index_of_word_in_original_list == index_of_number_in_sorted_number_list`.
+
+#### CROSS–TIE RULE
+10. Take the **first letters** of all seven words, concatenate them in order, and obtain a new 7-letter string. Convert that string to base-36 (treating ‘a’ = 10, … ‘z’ = 35); the resulting value must equal the **sum of your seven numbers**.
+
+Return only the JSON. Provide a brief `"proof"` string explaining, in plain English, how each rule is satisfied. Do **not** output anything else.
