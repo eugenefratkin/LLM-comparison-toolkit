@@ -24,18 +24,19 @@ class BaseAPIClient:
 
 class InceptionAPIClient(BaseAPIClient):
     """API client for Inception Labs API."""
-    
-    def __init__(self, api_key: str, config: Dict[str, Any], performance_tracker: PerformanceTracker):
+
+    def __init__(self, api_key: str, config: Dict[str, Any], performance_tracker: PerformanceTracker, model_name: str = None):
         super().__init__(config, performance_tracker)
         self.client = OpenAI(
             api_key=api_key,
             base_url="https://api.inceptionlabs.ai/v1"
         )
+        self.model_name = model_name or config.get('selected_models', {}).get('inception_labs', 'mercury')
         
     def call_api(self, prompt: str) -> Dict[str, Any]:
         """Call Inception Labs API with performance tracking."""
-        model_name = self.config['selected_models']['inception_labs']
-        start_time = self.performance_tracker.start_request('inception_labs', model_name)
+        provider_key = f'inception_labs_{self.model_name}'
+        start_time = self.performance_tracker.start_request(provider_key, self.model_name)
         ttft_start = time.perf_counter()
 
         try:
@@ -43,7 +44,7 @@ class InceptionAPIClient(BaseAPIClient):
             temperature = self.config['api_parameters']['temperature']
 
             response = self.client.chat.completions.create(
-                model=model_name,
+                model=self.model_name,
                 messages=[{"role": "user", "content": prompt}],
                 max_tokens=max_tokens,
                 temperature=temperature,
@@ -61,7 +62,7 @@ class InceptionAPIClient(BaseAPIClient):
             input_tokens = self._estimate_tokens(prompt)
             output_tokens = self._estimate_tokens(content)
             
-            self.performance_tracker.record_metrics('inception_labs', start_time, ttft or 0, input_tokens, output_tokens)
+            self.performance_tracker.record_metrics(provider_key, start_time, ttft or 0, input_tokens, output_tokens)
             
             return {
                 'success': True,
@@ -78,15 +79,16 @@ class InceptionAPIClient(BaseAPIClient):
 
 class OpenAIAPIClient(BaseAPIClient):
     """API client for OpenAI API."""
-    
-    def __init__(self, api_key: str, config: Dict[str, Any], performance_tracker: PerformanceTracker):
+
+    def __init__(self, api_key: str, config: Dict[str, Any], performance_tracker: PerformanceTracker, model_name: str = None):
         super().__init__(config, performance_tracker)
         self.client = OpenAI(api_key=api_key)
+        self.model_name = model_name or config.get('selected_models', {}).get('openai', 'gpt-3.5-turbo')
         
     def call_api(self, prompt: str) -> Dict[str, Any]:
         """Call OpenAI API with performance tracking."""
-        model_name = self.config['selected_models']['openai']
-        start_time = self.performance_tracker.start_request('openai', model_name)
+        provider_key = f'openai_{self.model_name}'
+        start_time = self.performance_tracker.start_request(provider_key, self.model_name)
         ttft_start = time.perf_counter()
 
         try:
@@ -94,7 +96,7 @@ class OpenAIAPIClient(BaseAPIClient):
             temperature = self.config['api_parameters']['temperature']
 
             response = self.client.chat.completions.create(
-                model=model_name,
+                model=self.model_name,
                 messages=[{"role": "user", "content": prompt}],
                 max_tokens=max_tokens,
                 temperature=temperature,
@@ -112,7 +114,7 @@ class OpenAIAPIClient(BaseAPIClient):
             input_tokens = self._estimate_tokens(prompt)
             output_tokens = self._estimate_tokens(content)
             
-            self.performance_tracker.record_metrics('openai', start_time, ttft or 0, input_tokens, output_tokens)
+            self.performance_tracker.record_metrics(provider_key, start_time, ttft or 0, input_tokens, output_tokens)
             
             return {
                 'success': True,
@@ -129,17 +131,17 @@ class OpenAIAPIClient(BaseAPIClient):
 
 class GeminiAPIClient(BaseAPIClient):
     """API client for Google Gemini API."""
-    
-    def __init__(self, api_key: str, config: Dict[str, Any], performance_tracker: PerformanceTracker):
+
+    def __init__(self, api_key: str, config: Dict[str, Any], performance_tracker: PerformanceTracker, model_name: str = None):
         super().__init__(config, performance_tracker)
         genai.configure(api_key=api_key)
-        gemini_model_name = self.config['selected_models']['gemini']
-        self.model = genai.GenerativeModel(gemini_model_name)
+        self.model_name = model_name or config.get('selected_models', {}).get('gemini', 'gemini-1.5-flash')
+        self.model = genai.GenerativeModel(self.model_name)
         
     def call_api(self, prompt: str) -> Dict[str, Any]:
         """Call Gemini API with performance tracking."""
-        model_name = self.config['selected_models']['gemini']
-        start_time = self.performance_tracker.start_request('gemini', model_name)
+        provider_key = f'gemini_{self.model_name}'
+        start_time = self.performance_tracker.start_request(provider_key, self.model_name)
         ttft_start = time.perf_counter()
 
         try:
@@ -162,7 +164,7 @@ class GeminiAPIClient(BaseAPIClient):
             input_tokens = self._estimate_tokens(prompt)
             output_tokens = self._estimate_tokens(content)
             
-            self.performance_tracker.record_metrics('gemini', start_time, ttft or 0, input_tokens, output_tokens)
+            self.performance_tracker.record_metrics(provider_key, start_time, ttft or 0, input_tokens, output_tokens)
             
             return {
                 'success': True,

@@ -1,10 +1,7 @@
 {
   "inception_labs": {
     "available_models": [
-      "mercury",
-      "gpt-3.5-turbo",
-      "gpt-4",
-      "gpt-4-turbo"
+      "mercury"
     ],
     "default_model": "mercury",
     "description": "Inception Labs models - mercury is their flagship model"
@@ -34,9 +31,9 @@
     "description": "Google Gemini models - gemini-2.5-flash is fast and cost-effective"
   },
   "selected_models": {
-    "inception_labs": "mercury",
-    "openai": "gpt-3.5-turbo",
-    "gemini": "gemini-1.5-flash"
+    "inception_labs": ["mercury"],
+      "openai": ["gpt-3.5-turbo", "gpt-4o", "gpt-4o-mini", "gpt-4-trubo"],
+    "gemini": ["gemini-1.5-flash", "gemini-2.5-flash"]
   },
   "api_parameters": {
     "max_tokens": 1000,

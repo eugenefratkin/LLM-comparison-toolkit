@@ -33,7 +33,7 @@ class LLMComparisonEngine:
             return {}
             
     def _initialize_clients(self):
-        """Initialize API clients with performance tracking."""
+        """Initialize API clients with performance tracking for multiple models per provider."""
         self.clients = {}
 
         # Debug: Check if .env file exists
@@ -42,31 +42,50 @@ class LLMComparisonEngine:
         else:
             print("✓ Found .env file")
 
+        # Initialize clients for each provider and model combination
         inception_key = os.getenv('INCEPTION_API_KEY')
         if inception_key:
-            self.clients['inception_labs'] = InceptionAPIClient(
-                inception_key, self.config, self.performance_tracker
-            )
-            print(f"✓ Inception Labs API client initialized (key: {inception_key[:8]}...)")
+            inception_models = self.config.get('selected_models', {}).get('inception_labs', [])
+            if isinstance(inception_models, str):
+                inception_models = [inception_models]  # Handle backward compatibility
+
+            for model in inception_models:
+                client_key = f'inception_labs_{model}'
+                self.clients[client_key] = InceptionAPIClient(
+                    inception_key, self.config, self.performance_tracker, model
+                )
+            print(f"✓ Inception Labs API clients initialized for {len(inception_models)} model(s): {', '.join(inception_models)}")
         else:
             print("⚠ Inception Labs API key not found (INCEPTION_API_KEY)")
 
         openai_key = os.getenv('OPENAI_API_KEY')
         if openai_key:
-            self.clients['openai'] = OpenAIAPIClient(
-                openai_key, self.config, self.performance_tracker
-            )
-            print(f"✓ OpenAI API client initialized (key: {openai_key[:8]}...)")
+            openai_models = self.config.get('selected_models', {}).get('openai', [])
+            if isinstance(openai_models, str):
+                openai_models = [openai_models]  # Handle backward compatibility
+
+            for model in openai_models:
+                client_key = f'openai_{model}'
+                self.clients[client_key] = OpenAIAPIClient(
+                    openai_key, self.config, self.performance_tracker, model
+                )
+            print(f"✓ OpenAI API clients initialized for {len(openai_models)} model(s): {', '.join(openai_models)}")
         else:
             print("⚠ OpenAI API key not found (OPENAI_API_KEY)")
 
-        # Initialize Gemini client
+        # Initialize Gemini clients
         gemini_key = os.getenv('GEMINI_API_KEY')
         if gemini_key:
-            self.clients['gemini'] = GeminiAPIClient(
-                gemini_key, self.config, self.performance_tracker
-            )
-            print("✓ Gemini API client initialized")
+            gemini_models = self.config.get('selected_models', {}).get('gemini', [])
+            if isinstance(gemini_models, str):
+                gemini_models = [gemini_models]  # Handle backward compatibility
+
+            for model in gemini_models:
+                client_key = f'gemini_{model}'
+                self.clients[client_key] = GeminiAPIClient(
+                    gemini_key, self.config, self.performance_tracker, model
+                )
+            print(f"✓ Gemini API clients initialized for {len(gemini_models)} model(s): {', '.join(gemini_models)}")
         else:
             print("⚠ Gemini API key not found (GEMINI_API_KEY)")
 
@@ -74,26 +93,39 @@ class LLMComparisonEngine:
             print("❌ No API clients initialized. Please check your .env file and API keys.")
             return
 
-        print(f"📊 Initialized {len(self.clients)} API client(s): {', '.join(self.clients.keys())}")
+        print(f"📊 Initialized {len(self.clients)} total client(s): {', '.join(self.clients.keys())}")
     
     def list_available_models(self):
         """Display available models for each API provider."""
         print("\nAvailable Models:")
         print("=" * 50)
-        
+
         skip_keys = {'selected_models', 'api_parameters'}
-        
+
         for provider, provider_config in self.config.items():
             if provider in skip_keys or not isinstance(provider_config, dict):
                 continue
-                
+
             available_models = provider_config.get('available_models', [])
+            selected_models = self.config.get('selected_models', {}).get(provider, [])
+            if isinstance(selected_models, str):
+                selected_models = [selected_models]  # Handle backward compatibility
+
             if available_models:
                 print(f"\n{provider.upper()}:")
                 for model in available_models:
-                    selected = self.config.get('selected_models', {}).get(provider, '')
-                    marker = " (selected)" if model == selected else ""
+                    marker = " ✓ (selected)" if model in selected_models else ""
                     print(f"  - {model}{marker}")
+
+        # Show current selection summary
+        print(f"\n{'='*20} CURRENT SELECTION {'='*20}")
+        selected_models = self.config.get('selected_models', {})
+        for provider, models in selected_models.items():
+            if isinstance(models, str):
+                models = [models]
+            provider_name = provider.replace('_', ' ').title()
+            print(f"{provider_name}: {', '.join(models)}")
+        print("=" * 62)
                 
     def read_prompt(self, prompt_file: str = "prompt.txt") -> str:
         """Read prompt from file."""
@@ -105,23 +137,29 @@ class LLMComparisonEngine:
             return ""
             
     def run_single_prompt_comparison(self, prompt: str) -> Dict[str, Any]:
-        """Run comparison across all APIs for a single prompt."""
+        """Run comparison across all provider-model combinations for a single prompt."""
         results = {}
-        
+
         print(f"\nRunning comparison for prompt: {prompt[:100]}...")
         print("=" * 60)
-        
-        for provider, client in self.clients.items():
-            print(f"\nCalling {provider.upper()} API...")
+
+        for client_key, client in self.clients.items():
+            # Extract provider and model from client key (e.g., "openai_gpt-4o" -> "OpenAI (gpt-4o)")
+            parts = client_key.split('_', 1)
+            provider = parts[0].replace('_', ' ').title()
+            model = parts[1] if len(parts) > 1 else "Unknown"
+            display_name = f"{provider} ({model})"
+
+            print(f"\nCalling {display_name} API...")
             result = client.call_api(prompt)
-            results[provider] = result
-            
+            results[client_key] = result
+
             if result['success']:
-                print(f"✓ {provider.upper()}: Success")
+                print(f"✓ {display_name}: Success")
                 print(f"Response: {result['response'][:200]}...")
             else:
-                print(f"✗ {provider.upper()}: Failed - {result['error']}")
-                
+                print(f"✗ {display_name}: Failed - {result['error']}")
+
         return results
         
     def run_chain_comparison(self, chain_file: str = "input_prompt_chain.json"):
@@ -144,9 +182,15 @@ class LLMComparisonEngine:
         print("=" * 60)
         print("=" * 60)
         
-        for provider, client in self.clients.items():
-            print(f"\n--- Executing chain for {provider.upper()} ---")
-            self._execute_chain_for_provider(provider, client, chain, chain_data)
+        for client_key, client in self.clients.items():
+            # Extract provider and model from client key
+            parts = client_key.split('_', 1)
+            provider = parts[0].replace('_', ' ').title()
+            model = parts[1] if len(parts) > 1 else "Unknown"
+            display_name = f"{provider} ({model})"
+
+            print(f"\n--- Executing chain for {display_name.upper()} ---")
+            self._execute_chain_for_provider(client_key, client, chain, chain_data)
             
     def _execute_chain_for_provider(self, provider: str, client, chain: List[Dict], chain_data: Dict[str, Any]):
         """Execute a prompt chain for a specific provider."""
