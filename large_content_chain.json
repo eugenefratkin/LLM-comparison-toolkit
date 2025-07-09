@@ -1,0 +1,34 @@
+{
+  "chain_name": "Large Content Processing Chain",
+  "description": "A 3-step chain designed to process and generate large content blocks (~10,000 characters each)",
+  "steps": [
+    {
+      "step_id": 1,
+      "name": "Generate Comprehensive Research Document",
+      "prompt": "Write a comprehensive research document about the impact of artificial intelligence on modern healthcare systems. The document should be approximately 10,000 characters long and include the following sections:\n\n1. Executive Summary (500 words)\n2. Introduction to AI in Healthcare (800 words)\n3. Current Applications and Technologies (1,500 words)\n   - Medical imaging and diagnostics\n   - Drug discovery and development\n   - Personalized treatment plans\n   - Robotic surgery\n   - Electronic health records optimization\n4. Benefits and Advantages (1,200 words)\n   - Improved accuracy and speed\n   - Cost reduction\n   - Enhanced patient outcomes\n   - Predictive analytics\n5. Challenges and Limitations (1,000 words)\n   - Data privacy and security\n   - Regulatory compliance\n   - Integration with existing systems\n   - Training and adoption\n6. Case Studies (800 words)\n   - 2-3 real-world examples of successful AI implementation\n7. Future Outlook and Trends (700 words)\n8. Conclusion and Recommendations (500 words)\n\nEnsure the document is well-structured, professionally written, includes specific examples, statistics where relevant, and maintains academic rigor throughout. The total length should be approximately 10,000 characters.",
+      "use_previous_output": false,
+      "output_variable": "research_document"
+    },
+    {
+      "step_id": 2,
+      "name": "Create Detailed Analysis and Critique",
+      "prompt": "Based on the following research document, create a comprehensive critical analysis that is approximately 10,000 characters long. Your analysis should:\n\n1. Methodology Review (1,500 words)\n   - Evaluate the research approach and structure\n   - Assess the quality of sources and evidence presented\n   - Identify any methodological strengths or weaknesses\n\n2. Content Analysis (2,000 words)\n   - Examine each major section for accuracy and completeness\n   - Identify key insights and novel perspectives\n   - Highlight any gaps or areas that need further exploration\n\n3. Critical Evaluation (2,000 words)\n   - Assess the validity of claims and conclusions\n   - Evaluate the balance between benefits and challenges presented\n   - Analyze the quality of case studies and examples\n\n4. Comparative Analysis (1,500 words)\n   - Compare findings with current industry standards\n   - Contrast with other research in the field\n   - Identify areas of consensus and disagreement\n\n5. Implications and Impact Assessment (1,500 words)\n   - Evaluate potential real-world applications\n   - Assess policy implications\n   - Consider economic and social impacts\n\n6. Recommendations for Improvement (1,000 words)\n   - Suggest areas for additional research\n   - Recommend methodological improvements\n   - Propose practical next steps\n\n7. Summary and Final Assessment (500 words)\n   - Overall evaluation of the document's contribution\n   - Key takeaways and conclusions\n\nEnsure your analysis is thorough, objective, and provides constructive criticism. Reference specific sections and examples from the original document.\n\nOriginal Research Document:\n{previous_output}",
+      "use_previous_output": true,
+      "output_variable": "critical_analysis"
+    },
+    {
+      "step_id": 3,
+      "name": "Synthesize Implementation Strategy",
+      "prompt": "Based on the research document and critical analysis provided, create a comprehensive implementation strategy document of approximately 10,000 characters that organizations can use to successfully deploy AI in healthcare. Structure your strategy as follows:\n\n1. Executive Summary and Strategic Overview (800 words)\n   - Key objectives and goals\n   - Strategic rationale and business case\n   - High-level implementation timeline\n\n2. Organizational Readiness Assessment (1,200 words)\n   - Current state analysis framework\n   - Technology infrastructure requirements\n   - Staff capability and training needs\n   - Change management considerations\n\n3. Phased Implementation Plan (2,000 words)\n   - Phase 1: Foundation and Pilot Programs (6 months)\n   - Phase 2: Scaled Deployment (12 months)\n   - Phase 3: Full Integration and Optimization (18 months)\n   - Key milestones and success metrics for each phase\n\n4. Technology Selection and Integration (1,500 words)\n   - Vendor evaluation criteria\n   - Integration architecture and requirements\n   - Data migration and system compatibility\n   - Security and compliance frameworks\n\n5. Risk Management and Mitigation (1,200 words)\n   - Identified risks and probability assessments\n   - Mitigation strategies and contingency plans\n   - Monitoring and early warning systems\n   - Regulatory compliance measures\n\n6. Training and Change Management (1,000 words)\n   - Staff training programs and curricula\n   - Change management communication strategy\n   - User adoption and engagement tactics\n   - Performance monitoring and feedback loops\n\n7. Financial Planning and ROI Analysis (1,200 words)\n   - Investment requirements and budget allocation\n   - Cost-benefit analysis and ROI projections\n   - Funding strategies and financial milestones\n   - Long-term financial sustainability\n\n8. Success Metrics and Evaluation Framework (800 words)\n   - Key performance indicators (KPIs)\n   - Measurement methodologies\n   - Reporting and review processes\n   - Continuous improvement mechanisms\n\n9. Conclusion and Next Steps (500 words)\n   - Implementation priorities\n   - Critical success factors\n   - Recommended immediate actions\n\nEnsure the strategy is practical, actionable, and directly addresses the insights and recommendations from both the original research and the critical analysis.\n\nResearch Document and Analysis:\n{previous_output}",
+      "use_previous_output": true,
+      "output_variable": "implementation_strategy"
+    }
+  ],
+  "chain_parameters": {
+    "max_tokens_per_step": 4000,
+    "temperature": 0.7,
+    "timeout_seconds": 120,
+    "continue_on_error": false,
+    "save_intermediate_results": true
+  }
+}
