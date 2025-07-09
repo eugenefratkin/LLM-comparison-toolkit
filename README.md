@@ -11,12 +11,18 @@ A Python tool for comparing responses from multiple Large Language Model APIs si
 - **Two comparison modes:**
   - **Single Prompt**: Compare responses to one prompt across all APIs
   - **Prompt Chains**: Execute multi-step chains where output feeds into next step
+- **Comprehensive Performance Benchmarking:**
+  - **TTFT (Time to First Token)**: Measures response initiation speed
+  - **TPOT (Time Per Output Token)**: Average token generation time
+  - **E2EL (End-to-End Latency)**: Total request completion time
+  - **Throughput Metrics**: Tokens/second and requests/second analysis
+  - **Statistical Analysis**: Mean, median, percentiles for all timing metrics
 - **Configurable model selection** - Choose specific models for each provider
 - Measures and records response times for each API and chain step
 - Saves results in CSV format for easy analysis
 - Reads prompts from external text files or JSON chain definitions
 - Handles API errors gracefully
-- Command-line options to list available models
+- Command-line options to list available models and enable performance analysis
 
 ## Installation
 
@@ -116,11 +122,29 @@ python llm_comparison.py --models
 nano models_config.json
 ```
 
+#### Performance Benchmarking
+
+```bash
+# Run with detailed performance metrics
+python llm_comparison.py --performance
+
+# Performance analysis for chains
+python llm_comparison.py --chain --performance
+```
+
+The `--performance` flag enables comprehensive benchmarking that measures:
+- **Time to First Token (TTFT)**: How quickly each API starts responding
+- **Time Per Output Token (TPOT)**: Average time to generate each token
+- **End-to-End Latency (E2EL)**: Total time from request to completion
+- **Throughput**: Tokens per second and requests per second
+- **Statistical Analysis**: Mean, median, standard deviation, and percentiles
+
 #### Results
 
 - Console output shows a summary
-- **Single prompt**: Results saved to `llm_comparison_results.csv`
-- **Chain**: Results saved to `llm_chain_results.csv`
+- **Single prompt**: Results saved to `llm_comparison_results_TIMESTAMP.csv`
+- **Chain**: Results saved to `llm_chain_results_TIMESTAMP.csv`
+- **Performance metrics**: Detailed benchmarking report displayed in console when using `--performance`
 
 ### Example Run
 
@@ -175,6 +199,12 @@ python llm_comparison.py --chain
 
 # List all available models
 python llm_comparison.py --models
+
+# Enable detailed performance benchmarking
+python llm_comparison.py --performance
+
+# Combine flags for performance analysis with chains
+python llm_comparison.py --chain --performance
 
 # Show help
 python llm_comparison.py --help
