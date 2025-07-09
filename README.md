@@ -38,23 +38,35 @@ A Python tool for comparing responses from multiple Large Language Model APIs si
    cd LLM-comparison-toolkit
    ```
 
-2. **Create a virtual environment (recommended):**
+2. **Create a Python virtual environment (recommended):**
    ```bash
-   python -m venv venv
-
+   # Create virtual environment
+   python -m venv llm-comparison-env
+   
    # Activate virtual environment
    # On Windows:
-   venv\Scripts\activate
+   llm-comparison-env\Scripts\activate
    # On macOS/Linux:
-   source venv/bin/activate
+   source llm-comparison-env/bin/activate
+   
+   # Verify activation (you should see the environment name in your prompt)
+   which python  # Should show path to venv python
    ```
 
 3. **Install required dependencies:**
    ```bash
+   # Make sure your virtual environment is activated first
+   pip install --upgrade pip
    pip install -r requirements.txt
    ```
 
-4. **Set up environment variables:**
+4. **Verify installation:**
+   ```bash
+   # Test that all dependencies are installed correctly
+   python -c "import numpy, pandas, transformers, openai; print('All dependencies installed successfully')"
+   ```
+
+5. **Set up environment variables:**
    ```bash
    # Copy the example environment file
    cp .env.example .env
@@ -63,7 +75,7 @@ A Python tool for comparing responses from multiple Large Language Model APIs si
    nano .env  # or use any text editor
    ```
 
-5. **Get your API Keys:**
+6. **Get your API Keys:**
    - **OpenAI**:
      - Visit [OpenAI Platform](https://platform.openai.com/api-keys)
      - Create an account and generate an API key
@@ -82,6 +94,15 @@ A Python tool for comparing responses from multiple Large Language Model APIs si
 ## How to Run
 
 ### Basic Usage
+
+**Important**: Always activate your virtual environment before running the toolkit:
+```bash
+# Activate virtual environment
+# On Windows:
+llm-comparison-env\Scripts\activate
+# On macOS/Linux:
+source llm-comparison-env/bin/activate
+```
 
 #### Single Prompt Comparison
 
