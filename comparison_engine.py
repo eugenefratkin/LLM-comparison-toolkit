@@ -16,7 +16,8 @@ class LLMComparisonEngine:
         self.performance_tracker = PerformanceTracker()
         self.results = []
         self.timing_data = []
-        load_dotenv()
+        # Load environment variables from .env file
+        load_dotenv(override=True)
         self._initialize_clients()
         
     def _load_config(self, config_file: str) -> Dict[str, Any]:
@@ -34,25 +35,46 @@ class LLMComparisonEngine:
     def _initialize_clients(self):
         """Initialize API clients with performance tracking."""
         self.clients = {}
-        
-        inception_key = os.getenv('INCEPTION_LABS_API_KEY')
+
+        # Debug: Check if .env file exists
+        if not os.path.exists('.env'):
+            print("Warning: .env file not found. Please create one from .env.example")
+        else:
+            print("✓ Found .env file")
+
+        inception_key = os.getenv('INCEPTION_API_KEY')
         if inception_key:
             self.clients['inception_labs'] = InceptionAPIClient(
                 inception_key, self.config, self.performance_tracker
             )
-            
+            print(f"✓ Inception Labs API client initialized (key: {inception_key[:8]}...)")
+        else:
+            print("⚠ Inception Labs API key not found (INCEPTION_API_KEY)")
+
         openai_key = os.getenv('OPENAI_API_KEY')
         if openai_key:
             self.clients['openai'] = OpenAIAPIClient(
                 openai_key, self.config, self.performance_tracker
             )
-            
+            print(f"✓ OpenAI API client initialized (key: {openai_key[:8]}...)")
+        else:
+            print("⚠ OpenAI API key not found (OPENAI_API_KEY)")
+
         # Initialize Gemini client
         gemini_key = os.getenv('GEMINI_API_KEY')
         if gemini_key:
             self.clients['gemini'] = GeminiAPIClient(
                 gemini_key, self.config, self.performance_tracker
             )
+            print("✓ Gemini API client initialized")
+        else:
+            print("⚠ Gemini API key not found (GEMINI_API_KEY)")
+
+        if not self.clients:
+            print("❌ No API clients initialized. Please check your .env file and API keys.")
+            return
+
+        print(f"📊 Initialized {len(self.clients)} API client(s): {', '.join(self.clients.keys())}")
     
     def list_available_models(self):
         """Display available models for each API provider."""
@@ -111,12 +133,15 @@ class LLMComparisonEngine:
             print(f"Chain file {chain_file} not found.")
             return
             
-        chain = chain_data.get('chain', [])
+        chain = chain_data.get('steps', [])
         if not chain:
-            print("No chain found in the file.")
+            print("No steps found in the chain file.")
             return
-            
-        print(f"\nRunning chain comparison with {len(chain)} steps...")
+
+        print(f"\nRunning chain comparison: {chain_data.get('chain_name', 'Unnamed Chain')}")
+        print(f"Description: {chain_data.get('description', 'No description')}")
+        print(f"Steps: {len(chain)}")
+        print("=" * 60)
         print("=" * 60)
         
         for provider, client in self.clients.items():
