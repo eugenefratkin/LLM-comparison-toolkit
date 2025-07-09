@@ -2,8 +2,10 @@
 .env
 
 # Output files
-llm_comparison_results.csv
-llm_chain_results.csv
+*.csv
+
+# Files with # in the name (temporary/backup files)
+*#*
 
 # Python cache files
 __pycache__/
