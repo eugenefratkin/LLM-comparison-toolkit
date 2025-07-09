@@ -1,0 +1,34 @@
+{
+  "chain_name": "Simple Test Chain",
+  "description": "A quick 3-step test chain for demonstration",
+  "steps": [
+    {
+      "step_id": 1,
+      "name": "Generate Topic",
+      "prompt": "Suggest a random interesting topic for a short essay (just the topic, 1-2 words).",
+      "use_previous_output": false,
+      "output_variable": "topic"
+    },
+    {
+      "step_id": 2,
+      "name": "Write Introduction",
+      "prompt": "Write a compelling 2-sentence introduction for an essay about: {previous_output}",
+      "use_previous_output": true,
+      "output_variable": "introduction"
+    },
+    {
+      "step_id": 3,
+      "name": "Add Conclusion",
+      "prompt": "Based on this introduction, write a matching 2-sentence conclusion:\n\n{previous_output}",
+      "use_previous_output": true,
+      "output_variable": "conclusion"
+    }
+  ],
+  "chain_parameters": {
+    "max_tokens_per_step": 200,
+    "temperature": 0.7,
+    "timeout_seconds": 60,
+    "continue_on_error": false,
+    "save_intermediate_results": true
+  }
+}
