@@ -32,9 +32,9 @@ def main():
         duration = time.perf_counter() - start_time
         
         if args.performance:
-            metrics = engine.calculate_benchmark_metrics(duration)
-            if metrics:
-                PerformanceReporter.print_performance_report(metrics, duration)
+            provider_metrics = engine.calculate_provider_metrics(duration)
+            if provider_metrics:
+                PerformanceReporter.print_provider_performance_report(provider_metrics, duration)
     else:
         start_time = time.perf_counter()
         prompt = engine.read_prompt()
@@ -47,13 +47,13 @@ def main():
             
             # Display performance metrics if requested
             if args.performance:
-                metrics = engine.calculate_benchmark_metrics(duration)
-                if metrics:
-                    PerformanceReporter.print_performance_report(metrics, duration)
+                provider_metrics = engine.calculate_provider_metrics(duration)
+                if provider_metrics:
+                    PerformanceReporter.print_provider_performance_report(provider_metrics, duration)
                 else:
                     print("No performance metrics available (no successful requests)")
-            
-            PerformanceReporter.print_summary_report(results, 
+
+            PerformanceReporter.print_summary_report(results,
                 engine.calculate_benchmark_metrics(duration) if args.performance else None)
         else:
             print("No prompt found. Please create a prompt.txt file or specify a prompt.")

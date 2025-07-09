@@ -178,6 +178,10 @@ class LLMComparisonEngine:
     def calculate_benchmark_metrics(self, duration_s: float) -> Optional[BenchmarkMetrics]:
         """Calculate comprehensive benchmark metrics from collected data."""
         return self.performance_tracker.calculate_metrics(duration_s)
+
+    def calculate_provider_metrics(self, duration_s: float) -> Dict[str, tuple]:
+        """Calculate benchmark metrics per provider with model information."""
+        return self.performance_tracker.calculate_all_provider_metrics(duration_s)
         
     def save_results_to_csv(self, results: Dict[str, Any], filename: Optional[str] = None):
         """Save comparison results to CSV file."""
